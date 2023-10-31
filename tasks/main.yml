@@ -1,2 +1,12 @@
 ---
 # tasks file for ansible-vllm
+- name: PIP; upgrade pip first
+  pip:
+    name: pip
+    extra_args: --upgrade
+    state: latest
+
+- name: PIP; install vllm 
+  pip:
+    name: vllm
+    state: present
