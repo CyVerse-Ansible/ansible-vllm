@@ -1,0 +1,12 @@
+
+[Unit]
+Description=VLLM OpenAPI Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ vllm_install_dir }}/vllm-api-launcher-{{ vllm_path_safe_name }}.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

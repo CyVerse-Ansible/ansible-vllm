@@ -1,22 +1,28 @@
 Role Name
 =========
 
-This ansible role will deploy vLLM to an Ubuntu server.
+ansible-vllm
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+None, currently.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+|| Name || Default || Description ||
+| VLLM_MODEL | None | The path to the model file, e.g. lmsys/vicuna-7b-v1.5 |
+| VLLM_MAX_NUM_BATCHED_TOKENS | 8192 | The maximum number of tokens to batch together |
+| VLLM_MAX_MODEL_LENGTH | 8192 | The maximum length of the model |
+| VLLM_API_SERVER_ENABLE | true | Whether to enable the API server |
+| VLLM_API_SERVER_LOCAL_ONLY | false | Whether to only listen on localhost |
+| VLLM_API_SERVER_HOST | 0.0.0.0 | The host to listen on (0.0.0.0 = listen on any address, 127.0.0.1 listen on localhost only) |
+| VLLM_API_SERVER_PORT | 8000 | The port to listen on |
+| VLLM_TENSOR_PARALLEL_SIZE | 1 | The number of GPUs to use for tensor parallelism; you can increase if using distributed compute |
 
 Dependencies
 ------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
 
 Example Playbook
 ----------------
@@ -24,8 +30,9 @@ Example Playbook
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
     - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+      tasks:
+        - ansible.builtin.import_role: 
+            name: ansible-vllm
 
 License
 -------

@@ -10,3 +10,32 @@
   pip:
     name: vllm
     state: present
+
+- block:
+  - name: FILE; create the vllm script directory
+    ansible.builtin.file:
+      path: "{{ vllm_install_dir }}"
+      state: directory
+      mode: 0755
+
+  - name: SET_FACT; set normalized model name for filesystem
+    set_fact:
+      vllm_path_safe_name: "{{ VLLM_MODEL|replace('/','_') }}"
+
+  - name: TEMPLATE; copy over the vllm api launcher file
+    ansible.builtin.template:
+      src: "vllm-api-launcher.sh.j2"
+      dest: "{{ vllm_install_dir }}/vllm-api-launcher-{{ vllm_path_safe_name }}.sh"
+      mode: 0755
+
+  - name: TEMPLATE; copy over the systemd service file
+    ansible.builtin.template:
+      src: "vllm.service.j2"
+      dest: "/lib/systemd/system/vllm-{{ vllm_path_safe_name }}.service"
+
+  - name: SYSTEMD_SERVICE; enable the vllm service
+    ansible.builtin.systemd:
+      name: "vllm-{{ vllm_path_safe_name }}"
+      state: started
+      enabled: true
+  when: VLLM_API_SERVER_ENABLE|bool
