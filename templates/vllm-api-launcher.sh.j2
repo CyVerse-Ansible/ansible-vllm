@@ -1,16 +1,17 @@
 #!/bin/bash
 
+# order matters, --host and --port must come after the other arguments or else CUDA memory will run out. Why? IDK
 python3 -m vllm.entrypoints.openai.api_server \
-{% if VLLM_API_SERVER_LOCAL_ONLY|bool %}
-    --host 127.0.0.1 \
-{% else %}
-    --host {{ VLLM_API_SERVER_HOST }} \
-{% endif %}
-    --port {{ VLLM_API_SERVER_PORT }} \
     --model {{ VLLM_MODEL }} \
     --max-num-batched-tokens {{ VLLM_MAX_NUM_BATCHED_TOKENS }} \
     --max-model-len {{ VLLM_MAX_MODEL_LENGTH }} \
 {% if VLLM_TENSOR_PARALLEL_SIZE > 1 %}
     --tensor-parallel-size {{ VLLM_TENSOR_PARALLEL_SIZE }} \
 {% endif %}
+{% if VLLM_API_SERVER_LOCAL_ONLY|bool %}
+    --host 127.0.0.1 \
+{% else %}
+    --host {{ VLLM_API_SERVER_HOST }} \
+{% endif %}
+    --port {{ VLLM_API_SERVER_PORT }} \
     > /var/log/vllm-{{ vllm_path_safe_name }}.log 2>&1
